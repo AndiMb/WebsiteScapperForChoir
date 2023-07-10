@@ -1,0 +1,6 @@
+*.csv
+test.py
+Daten_Sachsen
+wordlist_scrapper/wordlist_scrapper/__pycache__/__init__.cpython-39.pyc
+**/__pycache__
+*.pyc
