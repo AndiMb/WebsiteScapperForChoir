@@ -32,7 +32,7 @@ def getFilenameFromURL(url):
 # method to be called for each school / CSV row from file in parallel
 def handleSchool(row):
     # if School has URL/Website
-    if row[ulrcolumn]:
+    if row[ulrcolumn] and not "(" in row[ulrcolumn] and not " " in row[ulrcolumn].strip():
 
         # cleanup URL
         url = cleanURL(row[ulrcolumn])
