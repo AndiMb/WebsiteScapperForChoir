@@ -1,8 +1,14 @@
 import csv
+import configparser
 
-datadir = 'dataset20230709_3'
+# Read Config File
+config = configparser.ConfigParser()
+config.read('config.ini')
+bundesland = config['General']['Bundesland']
 
-with open(datadir + '/schulen_new.csv', 'r') as csvfile:
+datadir = config[bundesland]['datadir']
+
+with open(datadir + '/schools.csv', 'r') as csvfile:
     schoolreader = csv.reader(csvfile, delimiter=',', quotechar='"')
     header = next(schoolreader, None)
 
