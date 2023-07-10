@@ -6,7 +6,6 @@ import requests
 def find_all_substrings(string, sub):
 
     import re
-    #starts = [match.start() for match in re.finditer(re.escape(sub), string)]
     starts = [match.start() for match in re.finditer(sub, string)]
     return starts
 
@@ -17,14 +16,12 @@ class WebsiteSpider(CrawlSpider):
     crawl_count = 0
     words_found = 0     
 
-    def __init__(self, surls=None, adomain=None, *args, **kwargs):
+    def __init__(self, surls=None, adomain=None, adeny=None, *args, **kwargs):
         self.start_urls = [f"{surls}"]
         domain2 = adomain.replace("www.","")
         self.allowed_domains = [f"{adomain}", f"{domain2}"]
-        dir = surls.replace("https://","").replace("http://","").strip("/").split("/",1)
-        if len(dir) > 1:
-            # self.rules = [Rule(LinkExtractor(allow=r'.*' + dir[1] + r'.*'), follow=True, callback="check_buzzwords")]
-            self.rules = [Rule(LinkExtractor(deny=r'^https://cms.sachsen.schule/(demo|admin)'), follow=True, callback="check_buzzwords")]
+        if adeny:
+            self.rules = [Rule(LinkExtractor(deny=adeny), follow=True, callback="check_buzzwords")]
         else:
             self.rules = [Rule(LinkExtractor(), follow=True, callback="check_buzzwords")]
               
