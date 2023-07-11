@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import configparser
 
@@ -18,9 +19,13 @@ quotecharChar = config[bundesland]['quotecharChar']
 datadir = config[bundesland]['datadir']
 LinkExtDenyRegex = config[bundesland]['LinkExtDenyRegex']
 
+numberColumnsOrig = 0
+
 # Clean the URL, e.g. from Whitespaces
 def cleanURL(url):
     cleanurl = str(url).strip()
+    if not re.match('(?:http|ftp|https)://', cleanurl):
+        cleanurl = 'http://{}'.format(cleanurl)
     return cleanurl
 
 def getDomainFromURL(url):
@@ -98,6 +103,8 @@ with open(datadir + '/schools.csv', 'w') as outcsvfile, open(datadir + '/00_all.
         # write header to result file
         writer.writerow(header)
 
+        numberColumnsOrig = len(header)-1
+
         for row in schoolreader:
             schools.append(row)
 
@@ -115,14 +122,14 @@ with open(datadir + '/schools.csv', 'w') as outcsvfile, open(datadir + '/00_all.
         for res in as_completed(futures):
 
             # Output schoolname and number of found links
-            print(res.result()[schulnamecolumn], res.result()[ulrcolumn+1])
+            print(res.result()[schulnamecolumn], res.result()[numberColumnsOrig])
 
             # write row to result CSV
             writer.writerow(res.result())
             outcsvfile.flush()
 
             # if links available copy them in one file
-            if int(res.result()[ulrcolumn+1]) > 0:
+            if int(res.result()[numberColumnsOrig]) > 0:
                 outdatfile.write(res.result()[schulnamecolumn] + "\n")
                 if res.result()[ulrcolumn]:
                     url = cleanURL(res.result()[ulrcolumn])
